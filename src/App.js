@@ -1,12 +1,14 @@
 import { TrashIcon } from '@heroicons/react/20/solid'
 import Image from 'next/image'
+import { useState } from 'react'
+
 
 const cartProducts = [
   {
     id: 1,
     title: 'Basic Tee',
     href: '#',
-    price: '$32.00',
+    price: '$32.10',
     color: 'Black',
     size: 'Large',
     imageSrc: '/product-01.jpg',
@@ -27,6 +29,17 @@ const cartProducts = [
 // Çöp kutusu butonunu kullanarak sipariş özetinden ürün silmeyi mümkün kılın
 // Bonus: Doğru ara toplamı ve toplamı görüntüleyin
 export default function OrderSummary() {
+  const [cardList,setCardList] = useState(cartProducts)
+
+  const cardSubTotal = cardList.reduce((acc,product) => acc + +product.price.slice(1),0)
+
+  const cardTotal = cardSubTotal + 5
+
+  const handleRemoveProduct = (id) => {
+    const updatedList = cardList.filter((product) => product.id !== id)
+    setCardList(updatedList)
+  }
+
   return (
     <div className='max-w-sm py-8 mx-auto'>
       <h2 className='text-lg font-medium text-gray-900'>Sipariş özeti</h2>
@@ -34,7 +47,7 @@ export default function OrderSummary() {
       <div className='mt-4 rounded-lg border border-gray-200 bg-white shadow-sm'>
         <h3 className='sr-only'>Alışveriş sepetinizdeki ürünler</h3>
         <ul role='list' className='divide-y divide-gray-200'>
-          {cartProducts.map((product) => (
+          {/*cartProducts*/cardList.map((product) => (
             <li key={product.id} className='flex px-4 py-6 sm:px-6'>
               <div className='flex-shrink-0'>
                 <Image
@@ -64,7 +77,7 @@ export default function OrderSummary() {
                   </div>
 
                   <div className='ml-4 flow-root flex-shrink-0'>
-                    <button
+                    <button onClick={() => handleRemoveProduct(product.id)}
                       type='button'
                       className='-m-2.5 flex items-center justify-center bg-white p-2.5 text-gray-400 hover:text-gray-500'
                     >
@@ -86,7 +99,8 @@ export default function OrderSummary() {
         <dl className='space-y-6 border-t border-gray-200 px-4 py-6 sm:px-6'>
           <div className='flex items-center justify-between'>
             <dt className='text-sm'>Ara Toplam</dt>
-            <dd className='text-sm font-medium text-gray-900'>$64.00</dd>
+            <dd className='text-sm font-medium text-gray-900'>
+            ${cardSubTotal.toFixed(2)}</dd>
           </div>
           <div className='flex items-center justify-between'>
             <dt className='text-sm'>Kargo</dt>
@@ -94,7 +108,8 @@ export default function OrderSummary() {
           </div>
           <div className='flex items-center justify-between border-t border-gray-200 pt-6'>
             <dt className='text-base font-medium'>Toplam</dt>
-            <dd className='text-base font-medium text-gray-900'>$69.00</dd>
+            <dd className='text-base font-medium text-gray-900'>
+              ${(cardTotal).toFixed(2)}</dd>
           </div>
         </dl>
 
